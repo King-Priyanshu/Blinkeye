@@ -7,6 +7,15 @@ use Illuminate\Support\Str;
 
 class Hospital extends Model
 {
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_24_7_emergency' => 'boolean',
+        'lat' => 'float',
+        'lng' => 'float',
+        'amenities' => 'array',
+        'languages' => 'array',
+    ];
+
     protected $fillable = [
         'name',
         'domain',

@@ -17,6 +17,50 @@ class UpdateHospitalRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $nullableStrings = [
+            'domain', 'subdomain', 'custom_domain', 'location_id',
+            'address', 'emergency_contact', 'whatsapp',
+            'working_hours_weekday', 'working_hours_saturday', 'working_hours_sunday',
+            'map_url',
+            'short_description', 'about_us', 'accreditations',
+            'meta_title', 'meta_description', 'meta_keywords', 'og_image',
+            'image', 'background_image',
+        ];
+
+        $nullableUrls = [
+            'facebook', 'instagram', 'twitter', 'youtube', 'linkedin', 'canonical_url',
+        ];
+
+        $data = [];
+
+        foreach (array_merge($nullableStrings, $nullableUrls) as $field) {
+            if ($this->has($field) && ($this->input($field) === '' || $this->input($field) === null)) {
+                $data[$field] = null;
+            }
+        }
+
+        // Convert empty numeric fields to null
+        foreach (['lat', 'lng', 'established_year', 'number_of_beds', 'number_of_doctors'] as $field) {
+            if ($this->has($field) && ($this->input($field) === '' || $this->input($field) === null)) {
+                $data[$field] = null;
+            }
+        }
+
+        // Convert empty arrays to null for pivot fields
+        foreach (['service_ids', 'disease_ids', 'group_ids', 'blog_ids', 'doctor_ids'] as $field) {
+            if ($this->has($field) && $this->input($field) === null) {
+                $data[$field] = [];
+            }
+        }
+
+        $this->merge($data);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
@@ -38,29 +82,24 @@ class UpdateHospitalRequest extends FormRequest
             'is_active' => ['boolean'],
             'custom_domain' => ['nullable', 'string', 'max:255'],
             'template_id' => ['required', 'integer', 'min:1', 'max:5'],
-            'image' => ['nullable', 'image', 'max:2048'],
-            // Dynamic Appearance & Map
+            'image' => ['nullable', 'file', 'image', 'max:2048'],
             'primary_color' => ['nullable', 'string', 'max:50'],
             'secondary_color' => ['nullable', 'string', 'max:50'],
-            'background_image' => ['nullable', 'image', 'max:4096'],
+            'background_image' => ['nullable', 'file', 'image', 'max:4096'],
             'map_url' => ['nullable', 'string', 'max:1000'],
             'map_zoom' => ['nullable', 'integer', 'min:1', 'max:20'],
-            // Contact Information
             'address' => ['nullable', 'string', 'max:500'],
             'emergency_contact' => ['nullable', 'string', 'max:50'],
             'whatsapp' => ['nullable', 'string', 'max:50'],
-            // Working Hours
             'working_hours_weekday' => ['nullable', 'string', 'max:100'],
             'working_hours_saturday' => ['nullable', 'string', 'max:100'],
             'working_hours_sunday' => ['nullable', 'string', 'max:100'],
             'is_24_7_emergency' => ['boolean'],
-            // Social Media
             'facebook' => ['nullable', 'url', 'max:255'],
             'instagram' => ['nullable', 'url', 'max:255'],
             'twitter' => ['nullable', 'url', 'max:255'],
             'youtube' => ['nullable', 'url', 'max:255'],
             'linkedin' => ['nullable', 'url', 'max:255'],
-            // Additional Information
             'short_description' => ['nullable', 'string', 'max:500'],
             'about_us' => ['nullable', 'string'],
             'established_year' => ['nullable', 'integer', 'min:1800', 'max:2100'],
@@ -69,13 +108,11 @@ class UpdateHospitalRequest extends FormRequest
             'amenities' => ['nullable', 'array'],
             'accreditations' => ['nullable', 'string', 'max:500'],
             'languages' => ['nullable', 'array'],
-            // SEO Fields
             'meta_title' => ['nullable', 'string', 'max:70'],
             'meta_description' => ['nullable', 'string', 'max:160'],
             'meta_keywords' => ['nullable', 'string', 'max:255'],
             'og_image' => ['nullable', 'string', 'max:500'],
             'canonical_url' => ['nullable', 'url', 'max:255'],
-            // Pivot relationships
             'service_ids' => ['nullable', 'array'],
             'service_ids.*' => ['integer', 'exists:services,id'],
             'disease_ids' => ['nullable', 'array'],
@@ -84,7 +121,6 @@ class UpdateHospitalRequest extends FormRequest
             'group_ids.*' => ['integer', 'exists:groups,id'],
             'blog_ids' => ['nullable', 'array'],
             'blog_ids.*' => ['integer', 'exists:blogs,id'],
-            // Doctor Assignment
             'doctor_ids' => ['nullable', 'array'],
             'doctor_ids.*' => ['integer', 'exists:doctors,id'],
         ];

@@ -98,10 +98,10 @@ export default function Home({ hospital, hospitals }) {
     }, [hospital?.id]);
 
     const stats = [
-        { icon: Building2, value: hospital?.number_of_beds || '50+', label: 'Beds Facility' },
-        { icon: Users, value: hospital?.number_of_doctors || '15+', label: 'Specialist Doctors' },
-        { icon: Award, value: '14+', label: 'Years Excellence' },
-        { icon: Heart, value: '50K+', label: 'Happy Patients' },
+        { icon: Building2, value: hospital?.number_of_beds || hospital?.site_settings?.stats?.stat_locations?.value || '50+', label: 'Beds Facility' },
+        { icon: Users, value: hospital?.number_of_doctors || hospital?.site_settings?.stats?.stat_specialists?.value || '15+', label: 'Specialist Doctors' },
+        { icon: Award, value: hospital?.site_settings?.stats?.stat_experience?.value || '14+', label: 'Years Excellence' },
+        { icon: Heart, value: hospital?.site_settings?.stats?.stat_surgeries?.value || '50K+', label: 'Happy Patients' },
     ];
 
     const features = [
@@ -218,12 +218,12 @@ export default function Home({ hospital, hospitals }) {
                             >
                                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg">
                                     <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                                    <span className="text-sm font-semibold tracking-wide">Best Eye Hospital in {hospital?.location?.name || 'Your City'}</span>
+                                    <span className="text-sm font-semibold tracking-wide">{hospital?.site_settings?.hero?.hero_badge?.value || `Best Eye Hospital in ${hospital?.location?.name || 'Your City'}`}</span>
                                 </div>
 
                                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] text-white tracking-tight">
-                                    Clear Vision for a <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-200">Brighter Life</span>
+                                    {hospital?.site_settings?.hero?.hero_title?.value?.split('<br>')[0] || 'Clear Vision for a'} <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-200">{hospital?.site_settings?.hero?.hero_title?.value?.split('<br>')[1] || 'Brighter Life'}</span>
                                 </h1>
 
                                 <p className="text-xl md:text-2xl mb-10 text-slate-300 font-light leading-relaxed max-w-xl">

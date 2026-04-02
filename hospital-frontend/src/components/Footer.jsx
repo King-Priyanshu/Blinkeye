@@ -26,13 +26,13 @@ export default function Footer({ hospital }) {
         { name: 'Contact', path: `${basePath}/contact` },
     ];
 
-    const services = [
-        { name: 'Cataract Surgery', path: `${basePath}/services` },
-        { name: 'LASIK Surgery', path: `${basePath}/services` },
-        { name: 'Retina Treatment', path: `${basePath}/services` },
-        { name: 'Glaucoma Care', path: `${basePath}/services` },
-        { name: 'Eye Checkup', path: `${basePath}/services` },
-    ];
+    const services = (hospital?.services || [])
+        .filter(s => s.is_active)
+        .slice(0, 5)
+        .map(s => ({
+            name: s.name,
+            path: `${basePath}/services` // Ideally this would link to a specific service page if implemented
+        }));
 
     return (
         <footer className="relative bg-slate-950 text-slate-300 overflow-hidden">
@@ -70,9 +70,9 @@ export default function Footer({ hospital }) {
                         
                         {/* Social Handles */}
                         <div className="flex gap-4">
-                            {isSafeUrl(hospital?.social_links?.facebook) && (
+                            {hospital?.facebook && (
                                 <a
-                                    href={hospital.social_links.facebook}
+                                    href={hospital.facebook}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary-600 hover:text-white hover:border-primary-500 hover:shadow-[0_0_15px_rgba(var(--primary-600),0.5)] transition-all duration-300 group"
@@ -81,9 +81,9 @@ export default function Footer({ hospital }) {
                                     <Facebook className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                 </a>
                             )}
-                            {isSafeUrl(hospital?.social_links?.instagram) && (
+                            {hospital?.instagram && (
                                 <a
-                                    href={hospital.social_links.instagram}
+                                    href={hospital.instagram}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-pink-600 hover:text-white hover:border-pink-500 hover:shadow-[0_0_15px_rgba(219,39,119,0.5)] transition-all duration-300 group"
@@ -92,9 +92,9 @@ export default function Footer({ hospital }) {
                                     <Instagram className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                 </a>
                             )}
-                            {isSafeUrl(hospital?.social_links?.youtube) && (
+                            {hospital?.youtube && (
                                 <a
-                                    href={hospital.social_links.youtube}
+                                    href={hospital.youtube}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-500 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all duration-300 group"
@@ -193,8 +193,10 @@ export default function Footer({ hospital }) {
                                 </div>
                                 <div className="text-sm text-slate-500">
                                     <p className="text-slate-300 font-medium mb-1">Operating Hours</p>
-                                    <p>Mon-Sat: {hospital?.working_hours_weekday || '9:00 AM - 6:00 PM'}</p>
-                                    {hospital?.working_hours_sunday && <p className="mt-1 flex items-center text-xs"><span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2"></span>Sun: {hospital.working_hours_sunday}</p>}
+                                    <p>Mon-Fri: {hospital?.working_hours_weekday || '9:00 AM - 6:00 PM'}</p>
+                                    {hospital?.working_hours_saturday && <p className="mt-1">Sat: {hospital.working_hours_saturday}</p>}
+                                    {hospital?.working_hours_sunday && <p className="mt-1 flex items-center text-xs text-red-400"><span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2"></span>Sun: {hospital.working_hours_sunday}</p>}
+                                    {hospital?.is_24_7_emergency && <p className="mt-2 text-[10px] font-bold text-primary-500 uppercase tracking-tighter decoration-primary-500/30 underline underline-offset-4">24/7 Emergency Eye Care</p>}
                                 </div>
                             </li>
                         </ul>

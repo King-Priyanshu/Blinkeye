@@ -3,7 +3,7 @@ import { Head, useForm, Link } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import MapPicker from '@/Components/MapPicker.vue';
 import GeographicRegionSelector from '@/Components/GeographicRegionSelector.vue';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     hospital: Object,
@@ -20,60 +20,65 @@ const props = defineProps({
     selectedDoctorIds: Array,
 });
 
+const toVal = (v) => v ?? '';
+
 const form = useForm({
     _method: 'put',
-    name: props.hospital.name || '',
-    domain: props.hospital.domain || '',
-    subdomain: props.hospital.subdomain || '',
-    custom_domain: props.hospital.custom_domain || '',
-    template_id: props.hospital.template_id || 1,
-    email: props.hospital.email || '',
-    phone: props.hospital.phone || '',
-    location_id: props.hospital.location_id || '',
-    lat: props.hospital.lat || '',
-    lng: props.hospital.lng || '',
+    name: toVal(props.hospital.name),
+    domain: toVal(props.hospital.domain),
+    subdomain: toVal(props.hospital.subdomain),
+    custom_domain: toVal(props.hospital.custom_domain),
+    template_id: props.hospital.template_id ?? 1,
+    email: toVal(props.hospital.email),
+    phone: toVal(props.hospital.phone),
+    location_id: props.hospital.location_id ?? '',
+    lat: toVal(props.hospital.lat),
+    lng: toVal(props.hospital.lng),
     is_active: !!props.hospital.is_active,
     image: null,
-    primary_color: props.hospital.primary_color || '#0ea5e9',
-    secondary_color: props.hospital.secondary_color || '#38bdf8',
+    primary_color: props.hospital.primary_color ?? '#0ea5e9',
+    secondary_color: props.hospital.secondary_color ?? '#38bdf8',
     background_image: null,
-    map_url: props.hospital.map_url || '',
-    map_zoom: props.hospital.map_zoom || 12,
-    address: props.hospital.address || '',
-    emergency_contact: props.hospital.emergency_contact || '',
-    whatsapp: props.hospital.whatsapp || '',
-    working_hours_weekday: props.hospital.working_hours_weekday || '',
-    working_hours_saturday: props.hospital.working_hours_saturday || '',
-    working_hours_sunday: props.hospital.working_hours_sunday || '',
+    map_url: toVal(props.hospital.map_url),
+    map_zoom: props.hospital.map_zoom ?? 12,
+    address: toVal(props.hospital.address),
+    emergency_contact: toVal(props.hospital.emergency_contact),
+    whatsapp: toVal(props.hospital.whatsapp),
+    working_hours_weekday: toVal(props.hospital.working_hours_weekday),
+    working_hours_saturday: toVal(props.hospital.working_hours_saturday),
+    working_hours_sunday: toVal(props.hospital.working_hours_sunday),
     is_24_7_emergency: !!props.hospital.is_24_7_emergency,
-    facebook: props.hospital.facebook || '',
-    instagram: props.hospital.instagram || '',
-    twitter: props.hospital.twitter || '',
-    youtube: props.hospital.youtube || '',
-    linkedin: props.hospital.linkedin || '',
-    short_description: props.hospital.short_description || '',
-    about_us: props.hospital.about_us || '',
-    established_year: props.hospital.established_year || '',
-    number_of_beds: props.hospital.number_of_beds || '',
-    number_of_doctors: props.hospital.number_of_doctors || '',
-    amenities: props.hospital.amenities || [],
-    accreditations: props.hospital.accreditations || '',
-    languages: props.hospital.languages || [],
-    meta_title: props.hospital.meta_title || '',
-    meta_description: props.hospital.meta_description || '',
-    meta_keywords: props.hospital.meta_keywords || '',
-    og_image: props.hospital.og_image || '',
-    canonical_url: props.hospital.canonical_url || '',
-    service_ids: props.selectedServiceIds || [],
-    disease_ids: props.selectedDiseaseIds || [],
-    group_ids: props.selectedGroupIds || [],
-    blog_ids: props.selectedBlogIds || [],
-    doctor_ids: props.selectedDoctorIds || [],
+    facebook: toVal(props.hospital.facebook),
+    instagram: toVal(props.hospital.instagram),
+    twitter: toVal(props.hospital.twitter),
+    youtube: toVal(props.hospital.youtube),
+    linkedin: toVal(props.hospital.linkedin),
+    short_description: toVal(props.hospital.short_description),
+    about_us: toVal(props.hospital.about_us),
+    established_year: toVal(props.hospital.established_year),
+    number_of_beds: toVal(props.hospital.number_of_beds),
+    number_of_doctors: toVal(props.hospital.number_of_doctors),
+    amenities: props.hospital.amenities ?? [],
+    accreditations: toVal(props.hospital.accreditations),
+    languages: props.hospital.languages ?? [],
+    meta_title: toVal(props.hospital.meta_title),
+    meta_description: toVal(props.hospital.meta_description),
+    meta_keywords: toVal(props.hospital.meta_keywords),
+    og_image: toVal(props.hospital.og_image),
+    canonical_url: toVal(props.hospital.canonical_url),
+    service_ids: props.selectedServiceIds ?? [],
+    disease_ids: props.selectedDiseaseIds ?? [],
+    group_ids: props.selectedGroupIds ?? [],
+    blog_ids: props.selectedBlogIds ?? [],
+    doctor_ids: props.selectedDoctorIds ?? [],
 });
 
 const previewImage = ref(props.hospital.image ? `/storage/${props.hospital.image}` : null);
 const previewBackgroundImage = ref(props.hospital.background_image ? `/storage/${props.hospital.background_image}` : null);
-const mapCoordinates = ref({ lat: props.hospital.lat || null, lng: props.hospital.lng || null });
+const mapCoordinates = ref({ lat: props.hospital.lat ?? null, lng: props.hospital.lng ?? null });
+
+const hasErrors = computed(() => Object.keys(form.errors).length > 0);
+const errorList = computed(() => Object.values(form.errors));
 
 const presetPalettes = [
     { name: 'Medical Blue', primary: '#0ea5e9', secondary: '#38bdf8' },
@@ -92,26 +97,50 @@ const applyPalette = (palette) => {
 };
 
 const handleImageChange = (e) => {
-    const file = e.target.files[0]; form.image = file;
-    previewImage.value = file ? URL.createObjectURL(file) : null;
+    const file = e.target.files[0];
+    form.image = file ?? null;
+    previewImage.value = file ? URL.createObjectURL(file) : (props.hospital.image ? `/storage/${props.hospital.image}` : null);
 };
 
 const handleBackgroundImageChange = (e) => {
-    const file = e.target.files[0]; form.background_image = file;
-    previewBackgroundImage.value = file ? URL.createObjectURL(file) : null;
+    const file = e.target.files[0];
+    form.background_image = file ?? null;
+    previewBackgroundImage.value = file ? URL.createObjectURL(file) : (props.hospital.background_image ? `/storage/${props.hospital.background_image}` : null);
 };
 
 const submit = () => {
     if (mapCoordinates.value.lat) form.lat = mapCoordinates.value.lat;
     if (mapCoordinates.value.lng) form.lng = mapCoordinates.value.lng;
-    form.post(route('admin.hospitals.update', props.hospital.id));
+    form.post(route('admin.hospitals.update', props.hospital.id), {
+        preserveScroll: (page) => Object.keys(page.props.errors || {}).length > 0,
+    });
 };
 </script>
 
 <template>
     <Head title="Edit Premium Branch" />
     <AdminLayout>
-        <!-- Page Header Header with Glassmorphism -->
+        <!-- Validation Errors Banner -->
+        <transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0 -translate-y-2" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-200" leave-from-class="opacity-100" leave-to-class="opacity-0">
+            <div v-if="hasErrors" class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="mt-0.5 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-bold text-red-800">Please fix the following errors:</h3>
+                        <ul class="mt-2 space-y-1">
+                            <li v-for="(error, i) in errorList" :key="i" class="text-sm text-red-700">{{ error }}</li>
+                        </ul>
+                    </div>
+                    <button @click="form.clearErrors()" class="text-red-400 hover:text-red-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Page Header -->
         <div class="mb-8 relative rounded-2xl p-8 overflow-hidden shadow-lg bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700">
             <div class="absolute inset-0 bg-white/5 backdrop-blur-2xl"></div>
             <div class="relative z-10">
@@ -125,9 +154,9 @@ const submit = () => {
             </div>
         </div>
 
-        <!-- Form Wrapper -->
-        <form @submit.prevent="submit" class="space-y-10">
-            <!-- Basic Information Card -->
+        <!-- Form -->
+        <form @submit.prevent="submit" class="space-y-10" enctype="multipart/form-data">
+            <!-- Core Identity -->
             <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
                 <div class="px-8 py-6 border-b border-slate-100 bg-white/50">
                     <div class="flex items-center gap-3">
@@ -143,33 +172,29 @@ const submit = () => {
                 <div class="p-8">
                     <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-2">
                         <!-- Branch Name -->
-                        <div class="group">
-                            <label class="block text-sm font-semibold text-slate-700 group-focus-within:text-blue-600 transition-colors">Branch Name</label>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700">Branch Name <span class="text-red-500">*</span></label>
                             <input type="text" v-model="form.name" class="mt-2 block w-full rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium" required placeholder="e.g. Blink Eye Central" />
                             <p v-if="form.errors.name" class="mt-2 text-sm font-medium text-red-500">{{ form.errors.name }}</p>
                         </div>
-                        
+
                         <!-- Location -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-slate-700 mb-3">Geographic Region</label>
-                            <GeographicRegionSelector
-                                v-model="form.location_id"
-                                :locations="locations"
-                                :error="form.errors.location_id"
-                            />
+                            <GeographicRegionSelector v-model="form.location_id" :locations="locations" :error="form.errors.location_id" />
                         </div>
 
                         <!-- Phone -->
-                        <div class="group">
-                            <label class="block text-sm font-semibold text-slate-700 group-focus-within:text-blue-600 transition-colors">Primary Contact Number</label>
-                            <input type="tel" v-model="form.phone" class="mt-2 block w-full rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium" placeholder="+91 XXXXX XXXXX" />
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700">Primary Contact Number <span class="text-red-500">*</span></label>
+                            <input type="tel" v-model="form.phone" class="mt-2 block w-full rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium" required placeholder="+91 XXXXX XXXXX" />
                             <p v-if="form.errors.phone" class="mt-2 text-sm font-medium text-red-500">{{ form.errors.phone }}</p>
                         </div>
 
                         <!-- Email -->
-                        <div class="group">
-                            <label class="block text-sm font-semibold text-slate-700 group-focus-within:text-blue-600 transition-colors">Official Email</label>
-                            <input type="email" v-model="form.email" class="mt-2 block w-full rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium" placeholder="branch@blinkeye.in" />
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700">Official Email <span class="text-red-500">*</span></label>
+                            <input type="email" v-model="form.email" class="mt-2 block w-full rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium" required placeholder="branch@blinkeye.in" />
                             <p v-if="form.errors.email" class="mt-2 text-sm font-medium text-red-500">{{ form.errors.email }}</p>
                         </div>
 
@@ -177,37 +202,38 @@ const submit = () => {
                         <div class="md:col-span-2 pt-6 border-t border-slate-100/50">
                             <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-6">Digital Routing</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div class="group">
-                                    <label class="block text-sm font-semibold text-slate-700 group-focus-within:text-blue-600 transition-colors">URL Slug / Path</label>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700">URL Slug / Path</label>
                                     <div class="mt-2 relative flex items-stretch">
                                         <input type="text" v-model="form.subdomain" class="block w-full rounded-l-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-0 transition-all font-medium" placeholder="cityname" />
                                         <div class="flex items-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-50 px-4 text-slate-500 font-medium whitespace-nowrap"> (ex: amritsar)</div>
                                     </div>
                                     <p v-if="form.errors.subdomain" class="mt-2 text-sm font-medium text-red-500">{{ form.errors.subdomain }}</p>
                                 </div>
-                                <div class="group">
-                                    <label class="block text-sm font-semibold text-slate-700 group-focus-within:text-blue-600 transition-colors">Custom Domain (Optional)</label>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700">Custom Domain (Optional)</label>
                                     <input type="text" v-model="form.custom_domain" class="mt-2 block w-full rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium" placeholder="www.specialty-clinic.com" />
+                                    <p v-if="form.errors.custom_domain" class="mt-2 text-sm font-medium text-red-500">{{ form.errors.custom_domain }}</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Template -->
-                        <div class="md:col-span-2 group pt-6 border-t border-slate-100/50">
-                            <label class="block text-sm font-semibold text-slate-700 group-focus-within:text-blue-600 transition-colors">Web Engine Theme Template</label>
+                        <div class="md:col-span-2 pt-6 border-t border-slate-100/50">
+                            <label class="block text-sm font-semibold text-slate-700">Web Engine Theme Template</label>
                             <select v-model="form.template_id" class="mt-2 block w-full max-w-md rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium" required>
-                                <option :value="1">🚀 Template 1: Premium Modern Clinic</option>
-                                <option :value="2">👁️ Template 2: Elite Eye Care Layout</option>
-                                <option :value="3">✨ Template 3: Clean & Minimalist</option>
-                                <option :value="4">🏢 Template 4: Corporate Hospital Style</option>
-                                <option :value="5">👶 Template 5: Friendly / Pediatric Focus</option>
+                                <option :value="1">Template 1: Premium Modern Clinic</option>
+                                <option :value="2">Template 2: Elite Eye Care Layout</option>
+                                <option :value="3">Template 3: Clean & Minimalist</option>
+                                <option :value="4">Template 4: Corporate Hospital Style</option>
+                                <option :value="5">Template 5: Friendly / Pediatric Focus</option>
                             </select>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Media & Appearance Card -->
+            <!-- Visual Elements -->
             <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
                 <div class="px-8 py-6 border-b border-slate-100 bg-white/50">
                     <div class="flex items-center gap-3">
@@ -224,19 +250,10 @@ const submit = () => {
                     <div class="grid grid-cols-1 gap-y-10 md:grid-cols-2 gap-x-12">
                         <!-- Colors -->
                         <div class="space-y-6">
-                            <!-- Preset Palettes -->
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700">Quick Themes (Curated Palettes)</label>
                                 <div class="mt-3 flex flex-wrap gap-3">
-                                    <button 
-                                        type="button" 
-                                        v-for="palette in presetPalettes" 
-                                        :key="palette.name"
-                                        @click="applyPalette(palette)"
-                                        class="group relative flex items-center justify-center p-1 rounded-xl border-2 transition-all hover:-translate-y-0.5"
-                                        :class="(form.primary_color === palette.primary && form.secondary_color === palette.secondary) ? 'border-slate-400 scale-105 shadow-md' : 'border-transparent hover:border-slate-200'"
-                                        :title="palette.name"
-                                    >
+                                    <button type="button" v-for="palette in presetPalettes" :key="palette.name" @click="applyPalette(palette)" class="group relative flex items-center justify-center p-1 rounded-xl border-2 transition-all hover:-translate-y-0.5" :class="(form.primary_color === palette.primary && form.secondary_color === palette.secondary) ? 'border-slate-400 scale-105 shadow-md' : 'border-transparent hover:border-slate-200'" :title="palette.name">
                                         <div class="w-10 h-10 rounded-lg flex overflow-hidden border border-slate-200/50 shadow-sm">
                                             <div class="w-1/2 h-full" :style="{ backgroundColor: palette.primary }"></div>
                                             <div class="w-1/2 h-full" :style="{ backgroundColor: palette.secondary }"></div>
@@ -244,7 +261,6 @@ const submit = () => {
                                     </button>
                                 </div>
                             </div>
-                            <!-- Custom Colors -->
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-slate-700">Primary Color</label>
@@ -261,8 +277,8 @@ const submit = () => {
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Color Live Preview -->
+
+                            <!-- Live Preview -->
                             <div class="mt-6 p-6 rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white shadow-inner">
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Live UI Preview</p>
                                 <div class="flex flex-wrap items-center gap-4">
@@ -275,7 +291,7 @@ const submit = () => {
 
                         <!-- Images -->
                         <div class="space-y-8">
-                            <div class="group">
+                            <div>
                                 <label class="block text-sm font-semibold text-slate-700">Profile Photo (Thumbnail)</label>
                                 <div class="mt-3 flex items-start gap-5">
                                     <div class="h-24 w-24 shrink-0 rounded-2xl overflow-hidden bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center relative">
@@ -284,12 +300,13 @@ const submit = () => {
                                     </div>
                                     <div class="flex-1 pt-2">
                                         <input type="file" @change="handleImageChange" accept="image/*" class="block w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 transition-all cursor-pointer" />
-                                        <p class="text-xs text-slate-400 mt-2">Recommended: 800x800px square.</p>
+                                        <p class="text-xs text-slate-400 mt-2">Recommended: 800x800px square. Leave empty to keep current.</p>
+                                        <p v-if="form.errors.image" class="mt-2 text-sm font-medium text-red-500">{{ form.errors.image }}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="group">
+                            <div>
                                 <label class="block text-sm font-semibold text-slate-700">Hero Landscape Banner</label>
                                 <div class="mt-3 flex flex-col gap-4">
                                     <div class="h-32 w-full shrink-0 rounded-2xl overflow-hidden bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center relative shadow-inner">
@@ -297,11 +314,12 @@ const submit = () => {
                                         <svg v-else class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16" /></svg>
                                     </div>
                                     <input type="file" @change="handleBackgroundImageChange" accept="image/*" class="block w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-purple-50 file:text-purple-600 hover:file:bg-purple-100 transition-all cursor-pointer" />
+                                    <p v-if="form.errors.background_image" class="text-sm font-medium text-red-500">{{ form.errors.background_image }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Full Map Area -->
+                        <!-- Map -->
                         <div class="md:col-span-2 pt-8 border-t border-slate-100/50">
                             <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-6">Interactive Map Coordinates</h3>
                             <div class="rounded-3xl overflow-hidden shadow-lg border border-slate-200/60 relative group">
@@ -311,7 +329,7 @@ const submit = () => {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-slate-700">Google Map Embed HTML/URL</label>
-                                    <input type="url" v-model="form.map_url" class="mt-2 block w-full rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 font-medium" placeholder="https://www.google.com/maps/embed?..." />
+                                    <input type="text" v-model="form.map_url" class="mt-2 block w-full rounded-xl border-slate-200 bg-white/50 px-4 py-3 text-slate-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 font-medium" placeholder="https://www.google.com/maps/embed?..." />
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-slate-700">Default Zoom Level</label>
@@ -331,16 +349,16 @@ const submit = () => {
                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg> Contact & Address
                     </h3>
                     <div class="space-y-5">
-                        <div class="group">
+                        <div>
                             <label class="block text-sm font-semibold text-slate-700">Full Physical Address</label>
                             <textarea v-model="form.address" rows="3" class="mt-2 block w-full rounded-xl border-slate-200 bg-slate-50/50 px-4 py-3 text-slate-900 focus:border-green-500 focus:ring-4 focus:ring-green-500/10 font-medium"></textarea>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-5">
-                            <div class="flex-1 group">
+                            <div class="flex-1">
                                 <label class="block text-sm font-semibold text-slate-700">Emergency Line</label>
                                 <input type="text" v-model="form.emergency_contact" class="mt-2 block w-full rounded-xl border-slate-200 bg-slate-50/50 px-4 py-3 text-slate-900 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 font-medium text-red-600 font-bold" />
                             </div>
-                            <div class="flex-1 group">
+                            <div class="flex-1">
                                 <label class="block text-sm font-semibold text-slate-700">WhatsApp Helpdesk</label>
                                 <input type="text" v-model="form.whatsapp" class="mt-2 block w-full rounded-xl border-slate-200 bg-slate-50/50 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 font-medium" />
                             </div>
@@ -377,17 +395,15 @@ const submit = () => {
                 </div>
             </div>
 
-            <!-- Deep Associations Grid (Doctors, Services, etc.) -->
+            <!-- Branch Associations -->
             <div class="space-y-0 relative">
-                <!-- Assignment Header -->
                 <div class="text-center pb-8 pt-4">
                     <h2 class="text-2xl font-black text-slate-900 drop-shadow-sm">Branch Associations</h2>
                     <p class="text-slate-500 mt-2 font-medium">Link specialized entities directly to this location.</p>
                 </div>
 
                 <div class="grid grid-cols-1 gap-8">
-                    
-                    <!-- DOCTORS SELECTION -->
+                    <!-- DOCTORS -->
                     <div class="bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-xl rounded-3xl shadow-[0_-4px_30px_rgb(0,0,0,0.02),0_10px_40px_rgb(0,0,0,0.06)] border border-blue-100 p-8 transform hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
                         <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                         <div class="relative z-10 flex items-center justify-between mb-8">
@@ -396,7 +412,7 @@ const submit = () => {
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                                 </div>
                                 <div>
-                                    <h3 class="text-xl font-extrabold text-slate-900">Medical Specialists roster</h3>
+                                    <h3 class="text-xl font-extrabold text-slate-900">Medical Specialists Roster</h3>
                                     <p class="text-sm text-slate-500 mt-1 font-medium">Select expert doctors who practice at this specific branch.</p>
                                 </div>
                             </div>
@@ -404,15 +420,13 @@ const submit = () => {
                                 {{ form.doctor_ids.length }} Selected
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
                             <label v-for="doc in allDoctors" :key="doc.id" class="group relative flex flex-col p-5 cursor-pointer rounded-2xl border-2 transition-all duration-200 overflow-hidden bg-white hover:shadow-xl hover:shadow-blue-500/10" :class="form.doctor_ids.includes(doc.id) ? 'border-blue-500 ring-4 ring-blue-500/10' : 'border-slate-100 hover:border-blue-300'">
                                 <div class="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity" :class="{'opacity-100': form.doctor_ids.includes(doc.id)}"></div>
                                 <input type="checkbox" :value="doc.id" v-model="form.doctor_ids" class="absolute top-4 right-4 h-5 w-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-600 shadow-sm z-10 transition-transform" :class="{'scale-110': form.doctor_ids.includes(doc.id)}" />
-                                
                                 <div class="relative z-10 flex items-center gap-4">
                                     <div class="w-12 h-12 rounded-full bg-gradient-to-br from-slate-200 to-slate-100 flex items-center justify-center text-slate-400 font-bold border-2 border-white shadow-sm ring-1 ring-slate-100">
-                                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-bold text-slate-900 truncate">{{ doc.name }}</p>
@@ -426,9 +440,8 @@ const submit = () => {
                         </div>
                     </div>
 
-                    <!-- Layout Grid for smaller selectors -->
+                    <!-- Services, Diseases, Groups, Blogs -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        
                         <!-- SERVICES -->
                         <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
                             <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center">
@@ -489,13 +502,14 @@ const submit = () => {
                 <label class="relative inline-flex items-center cursor-pointer p-4 rounded-2xl bg-white shadow-sm border border-slate-100 hover:border-slate-200 transition-colors">
                     <input type="checkbox" v-model="form.is_active" class="sr-only peer">
                     <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-[1.75rem] peer-checked:after:border-white after:content-[''] after:absolute after:top-[18px] after:left-[18px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
-                    <span class="ml-4 text-base font-extrabold text-slate-900 tracking-tight">Active & Publised</span>
+                    <span class="ml-4 text-base font-extrabold text-slate-900 tracking-tight">Active & Published</span>
                 </label>
-                
+
                 <div class="flex gap-4 w-full sm:w-auto">
                     <Link :href="route('admin.hospitals.index')" class="flex-1 sm:flex-none text-center px-8 py-4 rounded-2xl font-bold text-slate-600 bg-white border-2 border-slate-200 hover:bg-slate-50 hover:text-slate-900 transition-all">Discard Changes</Link>
-                    <button type="submit" :disabled="form.processing" class="flex-1 sm:flex-none px-10 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all text-lg disabled:opacity-70">
-                        Update Branch 
+                    <button type="submit" :disabled="form.processing" class="flex-1 sm:flex-none px-10 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all text-lg disabled:opacity-70 disabled:cursor-not-allowed">
+                        <span v-if="form.processing">Saving...</span>
+                        <span v-else>Update Branch</span>
                     </button>
                 </div>
             </div>

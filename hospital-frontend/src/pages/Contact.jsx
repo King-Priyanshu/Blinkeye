@@ -238,9 +238,10 @@ export default function Contact({ hospital }) {
                                         <Clock className="w-6 h-6 text-primary-600" />
                                     </div>
                                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Working Hours</h3>
-                                    <div className="text-gray-600 space-y-1">
-                                        <p>Monday - Saturday: {hospital?.working_hours_weekday || '9:00 AM - 6:00 PM'}</p>
-                                        <p>Sunday: {hospital?.working_hours_sunday || 'Emergency Only'}</p>
+                                    <div className="text-gray-600 space-y-1 text-sm">
+                                        <p>Mon - Fri: {hospital?.working_hours_weekday || '9:00 AM - 6:00 PM'}</p>
+                                        {hospital?.working_hours_saturday && <p>Saturday: {hospital.working_hours_saturday}</p>}
+                                        {hospital?.working_hours_sunday && <p className="text-red-500 font-medium">Sunday: {hospital.working_hours_sunday}</p>}
                                     </div>
                                 </div>
                             </div>
@@ -269,15 +270,15 @@ export default function Contact({ hospital }) {
                             </div>
 
                             {/* Emergency Contact */}
-                            <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl p-6 text-white">
-                                <h3 className="text-lg font-semibold mb-2">24/7 Emergency</h3>
-                                <p className="text-red-100 mb-4">Our emergency services are available round the clock</p>
+                            <div className={`bg-gradient-to-r ${hospital?.is_24_7_emergency ? 'from-red-500 to-red-600' : 'from-primary-500 to-primary-600'} rounded-2xl p-6 text-white`}>
+                                <h3 className="text-lg font-semibold mb-2">{hospital?.is_24_7_emergency ? '24/7 Emergency' : 'Need Help?'}</h3>
+                                <p className="opacity-90 mb-4">{hospital?.is_24_7_emergency ? 'Our emergency services are available round the clock' : 'Get in touch with our experts for any queries'}</p>
                                 <a
                                     href={`tel:${hospital?.phone || '+919999999999'}`}
-                                    className="inline-flex items-center gap-2 bg-white text-red-600 font-semibold py-2 px-4 rounded-lg hover:bg-red-50"
+                                    className="inline-flex items-center gap-2 bg-white text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-gray-50"
                                 >
-                                    <Phone className="w-5 h-5" />
-                                    Emergency: {hospital?.phone || '+91 99999 99999'}
+                                    <Phone className="w-5 h-5 text-primary-600" />
+                                    {hospital?.is_24_7_emergency ? 'Emergency: ' : 'Call: '}{hospital?.phone || '+91 99999 99999'}
                                 </a>
                             </div>
                         </motion.div>
