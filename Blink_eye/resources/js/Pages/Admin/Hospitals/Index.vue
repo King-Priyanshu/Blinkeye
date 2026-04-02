@@ -31,13 +31,6 @@ const columns = [
                     <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Hospital Branches</h1>
                     <p class="mt-1 text-sm text-slate-500">Manage all Blink Eye clinic locations and their settings.</p>
                 </div>
-                <Link
-                    :href="route('admin.hospitals.create')"
-                    class="inline-flex items-center justify-center gap-x-2 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 hover:from-teal-500 hover:to-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-all"
-                >
-                    <PlusIcon class="h-5 w-5" aria-hidden="true" />
-                    Add Branch
-                </Link>
             </div>
         </div>
 
@@ -98,28 +91,6 @@ const columns = [
             </div>
         </div>
 
-        <!-- Search and filters -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 mb-6">
-            <div class="p-4 flex flex-col sm:flex-row gap-4">
-                <div class="relative flex-1">
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                        <MagnifyingGlassIcon class="h-5 w-5 text-slate-400" />
-                    </div>
-                    <input 
-                        type="search" 
-                        placeholder="Search hospitals..." 
-                        class="block w-full rounded-xl border-0 py-2.5 pl-11 pr-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-teal-500 sm:text-sm sm:leading-6 bg-slate-50"
-                    />
-                </div>
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center gap-x-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 transition-colors"
-                >
-                    <FunnelIcon class="h-5 w-5" />
-                    Filters
-                </button>
-            </div>
-        </div>
 
         <!-- Table -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">

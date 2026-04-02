@@ -262,10 +262,7 @@ const secondaryNav = navigation.slice(6);
                 </div>
                 
                 <div class="flex flex-1 items-center justify-end gap-x-4 lg:gap-x-6 ml-auto">
-                    
                     <div class="flex items-center gap-x-4 lg:gap-x-5">
-                        
-                        <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-slate-200" aria-hidden="true" />
                         
                         <!-- Notifications Bell -->
                         <button type="button" class="relative rounded-full p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors focus:outline-none">
