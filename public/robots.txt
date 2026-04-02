@@ -1,0 +1,158 @@
+# =====================================================
+# ROBOTS.TXT - Blink Eye Hospitals SEO Optimization
+# =====================================================
+
+# ------------------------------------------------------------
+# USER AGENTS
+# ------------------------------------------------------------
+
+# Allow all search crawlers
+User-agent: *
+
+# ------------------------------------------------------------
+# SITEMAP LOCATIONS
+# ------------------------------------------------------------
+
+# Main XML sitemap - contains all dynamic pages
+Sitemap: https://blinkeye.in/sitemap.xml
+
+# Image sitemap for better image indexing
+Sitemap: https://blinkeye.in/sitemap-images.xml
+
+# Video sitemap (for future video content)
+Sitemap: https://blinkeye.in/sitemap-videos.xml
+
+# ------------------------------------------------------------
+# ALLOWED PAGES (CRAWL ALLOW)
+# ------------------------------------------------------------
+
+Allow: /$
+Allow: /about-us
+Allow: /contact
+Allow: /book-appointment
+Allow: /doctors
+Allow: /services
+Allow: /blog
+Allow: /reviews
+
+# Allow hospital-specific pages
+Allow: /hospital/
+Allow: /eye-hospital-in-*
+Allow: /*-in-*
+
+# Allow doctor pages
+Allow: /doctors/*
+
+# Allow service pages
+Allow: /services/
+
+# Allow disease/treatment pages
+Allow: /*-treatment-*
+
+# Allow blog/article pages
+Allow: /blog/
+Allow: /article/
+
+# ------------------------------------------------------------
+# DISALLOWED PAGES (SEO & SECURITY)
+# ------------------------------------------------------------
+
+# Admin panel - completely block
+Disallow: /admin
+Disallow: /admin/*
+
+# Authentication routes
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /email/
+
+# API routes (no SEO value)
+Disallow: /api/
+Disallow: /api/*
+
+# User profile routes
+Disallow: /profile
+Disallow: /profile/*
+
+# Dashboard - require auth
+Disallow: /dashboard
+
+# Private routes
+Disallow: /private/
+Disallow: /storage/app/private/
+
+# Cache and temp files
+Disallow: /storage/framework/cache/
+Disallow: /storage/framework/sessions/
+Disallow: /storage/framework/views/
+Disallow: /storage/logs/
+
+# ------------------------------------------------------------
+# CRAWL DELAY (Optional - use sparingly)
+# ------------------------------------------------------------
+
+# Crawl-delay: 1
+
+# ------------------------------------------------------------
+# SPECIFIC SEARCH ENGINE DIRECTIVES
+# ------------------------------------------------------------
+
+# Googlebot Image
+User-agent: Googlebot-Image
+Allow: /storage/
+Allow: /images/
+Allow: /build/
+Disallow: /admin/
+Disallow: /api/
+
+# Googlebot Video
+User-agent: Googlebot-Video
+Allow: /videos/
+Disallow: /admin/
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /storage/framework/
+
+# Yahoo! Slurp
+User-agent: Slurp
+Allow: /
+Disallow: /admin/
+
+# DuckDuckBot
+User-agent: DuckDuckBot
+Allow: /
+
+# Yandex
+User-agent: Yandex
+Allow: /
+Disallow: /admin/
+Allow: /storage/public/
+
+# ------------------------------------------------------------
+# HOST DIRECTIVE (Legacy but still useful)
+# ------------------------------------------------------------
+
+Host: blinkeye.in
+
+# ------------------------------------------------------------
+# CLEAN PARAMETER URLs
+# ------------------------------------------------------------
+
+# These URL parameters should not be crawled as they create duplicate content
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term
+Clean-param: fbclid
+Clean-param: gclid
+Clean-param: ref
+Clean-param: source
+
+# ------------------------------------------------------------
+# SITEMAP INDEX FOR LARGE SITES
+# ------------------------------------------------------------
+
+# For sites with >50,000 URLs, use sitemap indexes
+# See: https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps
